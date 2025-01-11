@@ -121,7 +121,10 @@ public slots:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
-    void showEvent(QShowEvent *event) override;
+    //void showEvent(QShowEvent *event) override;
+    // TODO: Not overrides because the method is not virtual, see if there's a better way
+    void showNormal();
+    void showFullScreen();
     void hideEvent(QHideEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
 

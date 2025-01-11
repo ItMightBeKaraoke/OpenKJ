@@ -358,25 +358,49 @@ void DlgCdg::closeEvent([[maybe_unused]]QCloseEvent *event)
     emit visibilityChanged(false);
 }
 
-void DlgCdg::showEvent(QShowEvent *event)
-{
-    QDialog::showEvent(event);
-    m_settings.restoreWindowState(this);
-    m_settings.setShowCdgWindow(true);
-    if (m_settings.cdgWindowFullscreen())
-    {
-        this->showNormal();
-        QTimer::singleShot(100, [&] () {
-            ui->btnToggleFullscreen->setText("Make Windowed");
-            this->showFullScreen();
-            cdgOffsetsChanged();
-        });
+// FIXME: When the CDG window is newly displaying/unhidden as fullscreen, this
+// is trying to fix the contents margin by showing non-fullscreen, then after
+// it's had time to display, changing it to fullscreen and adjusting the
+// margins. Presumably this is because it needs to be visible before the
+// margins can be set and showEvent can be run before it's visible? Maybe
+// better to override showFullScreen/showNormal?
 
-    }
-    else
-        ui->btnToggleFullscreen->setText("Make Fullscreen");
-    QDialog::showEvent(event);
-    emit visibilityChanged(true);
+//void DlgCdg::showEvent(QShowEvent *event)
+//{
+//    QDialog::showEvent(event);
+//    m_settings.restoreWindowState(this);
+//    m_settings.setShowCdgWindow(true);
+//    if (m_settings.cdgWindowFullscreen())
+//    {
+//        this->showNormal();
+//        QTimer::singleShot(100, [&] () {
+//            ui->btnToggleFullscreen->setText("Make Windowed");
+//            this->showFullScreen();
+//            cdgOffsetsChanged();
+//        });
+//    }
+//    else
+//        ui->btnToggleFullscreen->setText("Make Fullscreen");
+//    QDialog::showEvent(event);
+//    emit visibilityChanged(true);
+//}
+//
+
+// Fix for above that *seems* to be working
+// TODO: do some more testing and see if it's actually ok
+
+void DlgCdg::showNormal() {
+    m_settings.setShowCdgWindow(true);
+    QWidget::showNormal();
+    ui->btnToggleFullscreen->setText("Make Fullscreen");
+    cdgOffsetsChanged();
+}
+
+void DlgCdg::showFullScreen() {
+    m_settings.setShowCdgWindow(true);
+    QWidget::showFullScreen();
+    ui->btnToggleFullscreen->setText("Make Windowed");
+    cdgOffsetsChanged();
 }
 
 void DlgCdg::hideEvent(QHideEvent *event)
