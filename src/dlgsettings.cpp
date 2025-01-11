@@ -21,7 +21,6 @@
 #include "dlgsettings.h"
 #include "ui_dlgsettings.h"
 #include <QGuiApplication>
-#include <QDesktopWidget>
 #include <QFontDialog>
 #include <QColorDialog>
 #include <QFileDialog>
@@ -266,7 +265,7 @@ DlgSettings::DlgSettings(MediaBackend &AudioBackend, MediaBackend &BmAudioBacken
     connect(ui->spinBoxSystemId, qOverload<int>(&QSpinBox::valueChanged), &m_settings, &Settings::setSystemId);
     connect(ui->checkBoxTreatAllSingersAsRegs, &QAbstractButton::toggled, &m_settings,
             &Settings::setTreatAllSingersAsRegs);
-    connect(ui->checkBoxShowAddDlgOnDbDblclk, &QCheckBox::stateChanged, [&](auto state) {
+    connect(ui->checkBoxShowAddDlgOnDbDblclk, &QCheckBox::checkStateChanged, [&](auto state) {
         if (state == 0)
             m_settings.setDbDoubleClickAddsSong(false);
         else

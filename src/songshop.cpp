@@ -93,7 +93,8 @@ void SongShop::downloadFile(const QString &url, const QString &destFn) {
     connect(reply, &QNetworkReply::downloadProgress, this, &SongShop::onDownloadProgress);
     loop.exec();
     QUrl aUrl(url);
-    QFileInfo fileInfo = aUrl.path();
+    // Not constructed right, but seems to be unused anyway?
+    //QFileInfo fileInfo = aUrl.path();
     QFile file(destPath);
     file.open(QIODevice::WriteOnly);
     file.write(reply->readAll());

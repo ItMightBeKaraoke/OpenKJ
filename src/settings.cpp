@@ -21,7 +21,6 @@
 #include "settings.h"
 #include <QCoreApplication>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QStandardPaths>
 #include <QCryptographicHash>
 #include <QDataStream>
@@ -362,7 +361,7 @@ Settings::Settings(QObject *parent) :
 #ifdef Q_OS_LINUX
     settings = new QSettings(this);
 #else
-    QDir khDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+    QDir khDir(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
     if (!khDir.exists())
     {
         khDir.mkpath(khDir.absolutePath());

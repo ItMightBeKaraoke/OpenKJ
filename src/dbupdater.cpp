@@ -27,6 +27,7 @@
 #include <QDirIterator>
 #include <QStandardPaths>
 #include <QApplication>
+#include <QStringRef>
 #include "mzarchive.h"
 #include "karaokefileinfo.h"
 

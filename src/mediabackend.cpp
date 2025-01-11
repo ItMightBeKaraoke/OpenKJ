@@ -108,7 +108,7 @@ void MediaBackend::writePipelineGraphToFile(GstBin *bin, const QString& filePath
 #ifdef Q_OS_WIN
     process.start(R"(C:\Program Files\Graphviz\bin\dot.exe)", dotArguments);
 #else
-    process.startCommand("dot", dotArguments);
+    process.start("dot", dotArguments);
 #endif
     process.waitForFinished();
     f.close();

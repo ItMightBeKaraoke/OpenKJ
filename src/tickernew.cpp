@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <utility>
 #include <QTimer>
+#include <QFile>
 #include <chrono>
 #include <thread>
 

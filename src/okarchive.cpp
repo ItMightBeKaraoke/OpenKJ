@@ -29,11 +29,14 @@
 #include <QProcess>
 #include <unistd.h>
 #endif
+#include <QRegExp>
+#include <iostream>
 
 QString infoZipPath;
 
 OkArchive::OkArchive(QString ArchiveFile, QObject *parent) : QObject(parent)
 {
+    m_logger = spdlog::get("logger");
     m_logger->info("{} Opening archive: {}", m_loggingPrefix, ArchiveFile);
     process = new QProcess();
     archiveFile = ArchiveFile;
@@ -321,11 +324,7 @@ zipEntries OkArchive::getZipContents()
         return zipEntries();
     }
     m_logger->trace("{} Infozip output: \n{}",m_loggingPrefix, output);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    QStringList data = output.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-#else
-    QStringList data = output.split(QRegExp("[\r\n]"),Qt::SkipEmptyParts);
-#endif
+    QStringList data = QRegExp("[\r\n]").splitString(output,Qt::SkipEmptyParts);
     int fnStart = 0;
     int listStart = 0;
     for (int l=0; l < data.size(); l++)
@@ -354,11 +353,7 @@ zipEntries OkArchive::getZipContents()
         zipEntry entry;
         int fnOffset = data.at(i).size() - fnStart;
         entry.fileName = data.at(i).right(fnOffset);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        entry.fileSize = data.at(i).split(" ", QString::SkipEmptyParts).at(0).toInt();
-#else
         entry.fileSize = data.at(i).split(' ', Qt::SkipEmptyParts).at(0).toInt();
-#endif
         m_entries.append(entry);
     }
     m_entriesProcessed = true;
@@ -412,7 +407,7 @@ bool OkArchive::zipIsValid()
     arguments << "-t";
     arguments << archiveFile;
     process->setProcessChannelMode(QProcess::ForwardedChannels);
-    process->startCommand(infoZipPath, arguments, QProcess::ReadOnly);
+    process->start(infoZipPath, arguments, QProcess::ReadOnly);
     process->waitForFinished();
     if (process->exitCode() != 0)
     {

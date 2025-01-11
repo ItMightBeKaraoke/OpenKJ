@@ -28,7 +28,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Sql Network Widgets Concurrent Svg PrintSupport REQUIRED)
+# Hopefully can remove Core5Compat at some point
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Sql Network Widgets Concurrent Svg PrintSupport Core5Compat REQUIRED)
 
 include_directories(
         src/
@@ -580,6 +581,7 @@ set(LIBRARIES
         Qt6::Svg
         Qt6::PrintSupport
         Qt6::Concurrent
+        Qt6::Core5Compat
         )
 
 

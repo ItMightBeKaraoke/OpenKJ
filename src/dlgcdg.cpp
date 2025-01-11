@@ -20,7 +20,6 @@
 
 #include "dlgcdg.h"
 #include "ui_dlgcdg.h"
-#include <QDesktopWidget>
 #include <QSvgRenderer>
 #include <QPainter>
 #include <QDir>
@@ -152,8 +151,10 @@ void DlgCdg::mouseDoubleClickEvent([[maybe_unused]]QMouseEvent *e)
     cdgOffsetsChanged();
     m_settings.setCdgWindowFullscreen(m_fullScreen);
     m_settings.saveWindowState(this);
-    QDesktopWidget widget;
-    m_settings.setCdgWindowFullscreenMonitor(widget.screenNumber(this));
+    //QDesktopWidget widget;
+    //m_settings.setCdgWindowFullscreenMonitor(widget.screenNumber(this));
+    //TODO: Determine if there's a better way to handle this setting
+    m_settings.setCdgWindowFullscreenMonitor(QGuiApplication::screens().indexOf(this->screen()));
 }
 
 QFileInfoList DlgCdg::getSlideShowImages()
@@ -333,8 +334,10 @@ void DlgCdg::btnToggleFullscreenClicked()
         showNormal();
     m_settings.setCdgWindowFullscreen(m_fullScreen);
     m_settings.saveWindowState(this);
-    QDesktopWidget widget;
-    m_settings.setCdgWindowFullscreenMonitor(widget.screenNumber(this));
+    //QDesktopWidget widget;
+    //m_settings.setCdgWindowFullscreenMonitor(widget.screenNumber(this));
+    //TODO: Determine if there's a better way to handle this setting
+    m_settings.setCdgWindowFullscreenMonitor(QGuiApplication::screens().indexOf(this->screen()));
     cdgOffsetsChanged();
 }
 
@@ -394,7 +397,7 @@ TransparentWidget::~TransparentWidget()
 
 void TransparentWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    this->move(event->globalPos() + m_startPoint);
+    this->move(event->globalPosition().toPoint() + m_startPoint);
     m_settings.setDurationPosition(this->pos());
 }
 
@@ -406,7 +409,7 @@ void TransparentWidget::moveEvent(QMoveEvent *event)
 
 void TransparentWidget::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        m_startPoint = frameGeometry().topLeft() - event->globalPos();
+        m_startPoint = frameGeometry().topLeft() - event->globalPosition().toPoint();
     }
 }
 
@@ -425,7 +428,8 @@ TransparentWidget::TransparentWidget(QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint);
     auto layout = new QHBoxLayout(this);
     setLayout(layout);
-    layout->setMargin(0);
+    // Doesn't seem to have method, can't find in Qt5 docs either?
+    //layout->setMargin(0);
     layout->setSpacing(0);
     layout->setContentsMargins(0,0,0,0);
     setContentsMargins(0,0,0,0);
