@@ -6,6 +6,7 @@
 
 class SoundFxButton : public QPushButton
 {
+	Q_OBJECT
 private:
     QVariant m_data;
 public:

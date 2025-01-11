@@ -412,7 +412,7 @@ bool OkArchive::zipIsValid()
     arguments << "-t";
     arguments << archiveFile;
     process->setProcessChannelMode(QProcess::ForwardedChannels);
-    process->start(infoZipPath, arguments, QProcess::ReadOnly);
+    process->startCommand(infoZipPath, arguments, QProcess::ReadOnly);
     process->waitForFinished();
     if (process->exitCode() != 0)
     {

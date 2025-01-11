@@ -8,6 +8,7 @@
 
 class SortFilterProxyModelSongShopSongs : public QSortFilterProxyModel
 {
+	Q_OBJECT
 public:
     explicit SortFilterProxyModelSongShopSongs(QObject *parent = nullptr);
     void setSearchTerms(const QString &value);
