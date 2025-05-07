@@ -60,7 +60,7 @@ const KaraokeFilePatternResolver::KaraokeFilePattern& KaraokeFilePatternResolver
     return getDefaultPattern();
 }
 
-static const KaraokeFilePatternResolver::KaraokeFilePattern defaultPattern { KaraokeFilePatternResolver::KaraokeFilePattern { .pattern = SourceDir::SAT } };
+static const KaraokeFilePatternResolver::KaraokeFilePattern defaultPattern { KaraokeFilePatternResolver::KaraokeFilePattern { .pattern = SourceDir::SAT, .customPattern = CustomPattern() } };
 
 const KaraokeFilePatternResolver::KaraokeFilePattern &KaraokeFilePatternResolver::getDefaultPattern()
 {

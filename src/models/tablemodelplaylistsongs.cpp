@@ -341,8 +341,9 @@ QMimeData *TableModelPlaylistSongs::mimeData(const QModelIndexList &indexes) con
     return mimeData;
 }
 
-bool TableModelPlaylistSongs::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
-                                              const QModelIndex &parent) const {
+bool TableModelPlaylistSongs::canDropMimeData(const QMimeData *data, [[maybe_unused]] Qt::DropAction action,
+                                              [[maybe_unused]] int row, [[maybe_unused]] int column,
+                                              [[maybe_unused]] const QModelIndex &parent) const {
     if (data->hasFormat("application/plsongids") && action == Qt::MoveAction)
         return true;
     if (data->hasFormat("application/vnd.bmsongid.list") && action == Qt::CopyAction)

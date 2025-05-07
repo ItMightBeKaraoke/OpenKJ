@@ -283,7 +283,7 @@ void DlgDatabase::on_btnExport_clicked()
     }
 }
 
-void DlgDatabase::on_foldersSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void DlgDatabase::on_foldersSelectionChanged([[maybe_unused]] const QItemSelection &selected, [[maybe_unused]] const QItemSelection &deselected)
 {
     updateButtonsState();
 }

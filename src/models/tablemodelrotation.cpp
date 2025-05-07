@@ -100,6 +100,7 @@ QVariant TableModelRotation::data(const QModelIndex &index, int role) const {
         case Qt::ForegroundRole:
             if (m_singers.at(index.row()).id == m_currentSingerId && index.column() > 0)
                 return QColor("black");
+            return {}; // It seems fallthrough was unintentional based on commit previous to 96b45d536
         case Qt::DisplayRole:
             return getDisplayData(index);
         default:
@@ -310,7 +311,7 @@ int TableModelRotation::singerAdd(const QString &name, const int positionHint) {
             break;
         }
         case ADD_NEXT:
-            if (curSingerPos != m_singers.size() - 2) {
+            if (curSingerPos != static_cast<int>(m_singers.size()) - 2) {
                 singerMove(addPos, curSingerPos + 1);
                 singerMoved = true;
             }
@@ -424,7 +425,7 @@ void TableModelRotation::singerDelete(const int singerId) {
     if (singerId == m_rotationTopSingerId) {
         if (m_singers.size() == 1)
             m_rotationTopSingerId = -1;
-        else if (getSinger(singerId).position == m_singers.size() - 1)
+        else if (getSinger(singerId).position == static_cast<int>(m_singers.size()) - 1)
             m_rotationTopSingerId = getSingerAtPosition(0).id;
         else
             m_rotationTopSingerId = getSingerAtPosition(getSinger(singerId).position + 1).id;
@@ -692,7 +693,9 @@ QMimeData *TableModelRotation::mimeData(const QModelIndexList &indexes) const {
     return mimeData;
 }
 
-bool TableModelRotation::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
+//TODO: on both functions below, investigate passed row vs parent.row()
+bool TableModelRotation::canDropMimeData(const QMimeData *data, [[maybe_unused]] Qt::DropAction action,
+                                         [[maybe_unused]] int row, [[maybe_unused]] int column,
                                          const QModelIndex &parent) const {
     if (parent.row() == -1 && !data->hasFormat("integer/rotationpos"))
         return false;
@@ -701,7 +704,8 @@ bool TableModelRotation::canDropMimeData(const QMimeData *data, Qt::DropAction a
     return false;
 }
 
-bool TableModelRotation::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
+bool TableModelRotation::dropMimeData(const QMimeData *data, Qt::DropAction action, int row,
+                                      [[maybe_unused]] int column,
                                       const QModelIndex &parent) {
     if (action == Qt::MoveAction && data->hasFormat("application/rotsingers")) {
         QJsonDocument jDoc = QJsonDocument::fromJson(data->data("application/rotsingers"));
@@ -714,7 +718,7 @@ bool TableModelRotation::dropMimeData(const QMimeData *data, Qt::DropAction acti
             dropRow = row;
         else
             dropRow = m_singers.size() - 1;
-        if (getSinger(ids.at(0).toInt()).position > dropRow)
+        if (static_cast<size_t>(getSinger(ids.at(0).toInt()).position) > dropRow)
             std::reverse(ids.begin(), ids.end());
         for (const auto &val: ids) {
             singerMove(getSinger(val.toInt()).position, static_cast<int>(dropRow), true);
@@ -725,7 +729,7 @@ bool TableModelRotation::dropMimeData(const QMimeData *data, Qt::DropAction acti
             // moving to bottom
             emit singersMoved(static_cast<int>(m_singers.size() - ids.size()), 0,
                               static_cast<int>(m_singers.size() - 1), columnCount(QModelIndex()) - 1);
-        } else if (getSinger(ids.at(0).toInt()).position < dropRow) {
+        } else if (static_cast<size_t>(getSinger(ids.at(0).toInt()).position) < dropRow) {
             // moving down
             emit singersMoved(static_cast<int>(dropRow - ids.size() + 1), 0, static_cast<int>(dropRow),
                               columnCount(QModelIndex()) - 1);
@@ -773,7 +777,7 @@ void TableModelRotation::setRotationTopSingerId(const int id) {
 }
 
 const okj::RotationSinger &TableModelRotation::getSingerAtPosition(int position) const {
-    if (position < 0 || position > m_singers.size() - 1)
+    if (position < 0 || position > static_cast<int>(m_singers.size()) - 1)
         return InvalidSinger;
     return m_singers.at(position);
 }
@@ -810,7 +814,7 @@ int TableModelRotation::positionTurnDistance(int position) const {
 }
 
 int TableModelRotation::positionWaitTime(int position) const {
-    if (position < 0 || position > m_singers.size() - 1)
+    if (position < 0 || position > static_cast<int>(m_singers.size()) - 1)
         return 0;
 
     const auto &curSinger = getSinger(m_currentSingerId);
@@ -841,7 +845,7 @@ int TableModelRotation::positionWaitTime(int position) const {
                 totalWaitDuration += nextDuration;
             }
         }
-        for (int i = curSinger.position; i < m_singers.size(); i++) {
+        for (int i = curSinger.position; i < static_cast<int>(m_singers.size()); i++) {
             const auto &loopSinger = getSingerAtPosition(i);
             if (i == curSinger.position)
                 totalWaitDuration += 240;

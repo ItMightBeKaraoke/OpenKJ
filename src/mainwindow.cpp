@@ -3640,7 +3640,7 @@ void MainWindow::updateRotationDuration() {
     m_labelRotationDuration.setText(text);
 }
 
-void MainWindow::rotationSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
+void MainWindow::rotationSelectionChanged(const QItemSelection &selected, [[maybe_unused]] const QItemSelection &deselected) {
     if (selected.empty()) {
         m_logger->trace("{} Rotation Selection Cleared!", m_loggingPrefix);
         m_qModel.loadSinger(-1);

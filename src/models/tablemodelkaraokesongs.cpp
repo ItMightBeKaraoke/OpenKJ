@@ -31,6 +31,7 @@ QVariant TableModelKaraokeSongs::headerData(int section, Qt::Orientation orienta
         case Qt::SizeHintRole:
             if (orientation == Qt::Horizontal)
                 return getColumnSizeHint(section);
+            break;
         default:
             return {};
     }

@@ -185,7 +185,6 @@ void OKJSongbookAPI::updateSongDb()
         if (numEntries % songsPerDoc > 0)
             numDocs++;
         emit remoteSongDbUpdateNumDocs(numDocs);
-        int docs = 0;
         while (!done)
         {
             if (cancelUpdate)
@@ -204,7 +203,6 @@ void OKJSongbookAPI::updateSongDb()
                 QApplication::processEvents();
                 count++;
             }
-            docs++;
             if (count < songsPerDoc)
                 done = true;
             QJsonObject mainObject;

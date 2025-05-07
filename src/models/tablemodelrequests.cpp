@@ -47,11 +47,11 @@ void TableModelRequests::requestsChanged(const OkjsRequests &requests) {
     emit layoutChanged();
 }
 
-int TableModelRequests::rowCount(const QModelIndex &parent) const {
+int TableModelRequests::rowCount([[maybe_unused]] const QModelIndex &parent) const {
     return m_requests.size();
 }
 
-int TableModelRequests::columnCount(const QModelIndex &parent) const {
+int TableModelRequests::columnCount([[maybe_unused]] const QModelIndex &parent) const {
     return 6;
 }
 
@@ -121,7 +121,7 @@ QVariant TableModelRequests::headerData(int section, Qt::Orientation orientation
     return {};
 }
 
-Qt::ItemFlags TableModelRequests::flags(const QModelIndex &index) const {
+Qt::ItemFlags TableModelRequests::flags([[maybe_unused]] const QModelIndex &index) const {
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 

@@ -516,28 +516,28 @@ void Settings::setApplicationFont(const QFont &font)
 
 QFont Settings::tickerFont()
 {
-    QFontDatabase fdb;
+    //TODO: the old QFontDatabase instance methods are deprecated, there may still be a better way to do this though
+    //It is possible to create a QFont with multiple families. Need to test how fallback works in that case
     QFont font;
-    QFont defaultFont = QApplication::font();
-    if (fdb.hasFamily("Roboto Medium"))
-        defaultFont = QFont("Roboto Medium");
-    else if (fdb.hasFamily("Verdana"))
-        defaultFont = QFont("Verdana");
-    defaultFont.setPointSize(48);
+    QFont defaultFont = QFontDatabase::font("Roboto Medium", "", 48);
+    if (defaultFont.family() != "Roboto Medium")
+        defaultFont = QFontDatabase::font("Verdana", "", 48);
+    else if (defaultFont.family() != "Verdana")
+        defaultFont.setPointSize(48);
+    //TODO: determine if this setting can be used without all the tostring/fromstring
     font.fromString(settings->value("tickerFont", defaultFont.toString()).toString());
     return font;
 }
 
 QFont Settings::applicationFont() const
 {
-    QFontDatabase fdb;
+    //TODO: See function above
     QFont font;
-    QFont defaultFont = QApplication::font();
-    if (fdb.hasFamily("Roboto"))
-        defaultFont = QFont("Roboto");
-    else if (fdb.hasFamily("Verdana"))
-        defaultFont = QFont("Verdana");
-    defaultFont.setPointSize(14);
+    QFont defaultFont = QFontDatabase::font("Roboto", "", 14);
+    if (defaultFont.family() != "Roboto")
+        defaultFont = QFontDatabase::font("Verdana", "", 14);
+    else if (defaultFont.family() != "Verdana")
+        defaultFont.setPointSize(14);
     font.fromString(settings->value("applicationFont", defaultFont.toString()).toString());
     return font;
 }
@@ -576,16 +576,14 @@ void Settings::setTickerTextColor(QColor color)
 
 QFont Settings::cdgRemainFont()
 {
-    QFontDatabase fdb;
     QFont font;
-    QFont defaultFont = QApplication::font();
-    if (fdb.hasFamily("Roboto Mono Medium"))
-        defaultFont = QFont("Roboto Mono Medium");
-    else if (fdb.hasFamily("Source Code Pro Medium"))
-        defaultFont = QFont("Source Code Pro Medium");
-    else if (fdb.hasFamily("Verdana"))
-        defaultFont = QFont("Verdana");
-    defaultFont.setPointSize(48);
+    QFont defaultFont = QFontDatabase::font("Roboto Mono Medium", "", 48);
+    if (defaultFont.family() != "Roboto Mono Medium")
+        defaultFont = QFontDatabase::font("Source Code Pro Medium", "", 48);
+    else if (defaultFont.family() != "Source Code Pro Medium")
+        defaultFont = QFontDatabase::font("Verdana", "", 48);
+    else if (defaultFont.family() != "Verdana")
+        defaultFont.setPointSize(48);
     font.fromString(settings->value("cdgRemainFont", defaultFont.toString()).toString());
     return font;
 }

@@ -399,8 +399,9 @@ QMimeData *TableModelQueueSongs::mimeData(const QModelIndexList &indexes) const 
     return mimeData;
 }
 
-bool TableModelQueueSongs::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
-                                           const QModelIndex &parent) const {
+bool TableModelQueueSongs::canDropMimeData(const QMimeData *data, [[maybe_unused]] Qt::DropAction action,
+                                           [[maybe_unused]] int row, [[maybe_unused]] int column,
+                                           [[maybe_unused]] const QModelIndex &parent) const {
     if ((data->hasFormat("integer/songid")) || (data->hasFormat("text/queueitems")) ||
         data->hasFormat("text/uri-list")) {
         return true;
@@ -408,8 +409,8 @@ bool TableModelQueueSongs::canDropMimeData(const QMimeData *data, Qt::DropAction
     return false;
 }
 
-bool TableModelQueueSongs::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
-                                        const QModelIndex &parent) {
+bool TableModelQueueSongs::dropMimeData(const QMimeData *data, Qt::DropAction action, int row,
+                                        [[maybe_unused]] int column, const QModelIndex &parent) {
     if (getSingerId() == -1) {
         emit songDroppedWithoutSinger();
         return false;

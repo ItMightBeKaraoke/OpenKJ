@@ -104,7 +104,8 @@ void SongShop::downloadFile(const QString &url, const QString &destFn) {
     knSessionId = "";
 }
 
-void SongShop::onSslErrors(QNetworkReply *reply, QList<QSslError> errors) {
+// TODO: show error detail?
+void SongShop::onSslErrors(QNetworkReply *reply, [[maybe_unused]] QList<QSslError> errors) {
     reply->abort();
     m_logger->warn("{} Received SSL error when connecting to db.openkj.org, please make sure your system time and date are correct", m_loggingPrefix);
 }

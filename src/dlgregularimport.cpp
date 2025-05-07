@@ -223,7 +223,6 @@ QStringList DlgRegularImport::legacyImportSinger(const QString &name)
         if ((xml.isStartElement()) && (xml.name() == "singer") && (xml.attributes().value("name") == name))
         {
             xml.readNext();
-            int position = 0;
             while ((xml.name() != "singer") && (!xml.isEndDocument()))
             {
                 if ((xml.isStartElement()) && (xml.name() == "song"))
@@ -241,7 +240,6 @@ QStringList DlgRegularImport::legacyImportSinger(const QString &name)
                     {
                         QString path = query.value(0).toString();
                         m_historySongsModel.saveSong(name,path,artist,title,songId,keyChg);
-                        position++;
                     }
                     else
                     {
@@ -260,7 +258,6 @@ QStringList DlgRegularImport::legacyImportSinger(const QString &name)
                        {
                            QString path = query.value(0).toString();
                            m_historySongsModel.saveSong(name,path,artist,title,songId,keyChg);
-                           position++;
                        }
                        else
                        {
