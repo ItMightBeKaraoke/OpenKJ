@@ -40,10 +40,11 @@
 DlgSettings::DlgSettings(MediaBackend &AudioBackend, MediaBackend &BmAudioBackend, OKJSongbookAPI &songbookAPI,
                          QWidget *parent) :
         QDialog(parent),
+        ui(new Ui::DlgSettings),
         kAudioBackend(AudioBackend),
         bmAudioBackend(BmAudioBackend),
-        songbookApi(songbookAPI),
-        ui(new Ui::DlgSettings) {
+        songbookApi(songbookAPI)
+{
     m_logger = spdlog::get("logger");
     m_pageSetupDone = false;
     networkManager = new QNetworkAccessManager(this);

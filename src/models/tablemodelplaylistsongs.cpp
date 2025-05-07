@@ -369,7 +369,7 @@ bool TableModelPlaylistSongs::dropMimeData(const QMimeData *data, Qt::DropAction
             std::reverse(ids.begin(), ids.end());
         std::for_each(ids.begin(), ids.end(), [&](auto val) {
             int oldPosition = getSongPositionById(val.toInt());
-            if (oldPosition < droprow && droprow != m_songs.size() - 1)
+            if (oldPosition < droprow && droprow != static_cast<int>(m_songs.size()) - 1)
                 moveSong(oldPosition, droprow - 1);
             else
                 moveSong(oldPosition, droprow);
@@ -443,7 +443,7 @@ std::optional<std::reference_wrapper<PlaylistSong>> TableModelPlaylistSongs::get
     auto curSong = getCurrentSong();
     if (!curSong.has_value())
         return getPlSongByPosition(0);
-    if (curSong->get().position < m_songs.size() - 1)
+    if (curSong->get().position < static_cast<int>(m_songs.size()) - 1)
         return getPlSongByPosition(curSong->get().position + 1);
     return getPlSongByPosition(0);
 }

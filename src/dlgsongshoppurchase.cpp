@@ -11,8 +11,8 @@
 
 DlgSongShopPurchase::DlgSongShopPurchase(std::shared_ptr<SongShop> songShop, QWidget *parent) :
     QDialog(parent),
-    shop(std::move(songShop)),
-    ui(new Ui::DlgSongShopPurchase)
+    ui(new Ui::DlgSongShopPurchase),
+    shop(std::move(songShop))
 {
     setupDone = false;
     ui->setupUi(this);

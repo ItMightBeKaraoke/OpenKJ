@@ -48,9 +48,14 @@
 #include <timeapi.h>
 #endif
 
+//TODO: Check what clang was warning about, or if it still does
+#if defined(__clang__)
+    #pragma clang diagnostic push
+#endif //defined(__clang__)
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCDFAInspection"
+//TODO: Figure out why this was here and if still needed for some C++ IDE
+//#pragma ide diagnostic ignored "OCDFAInspection"
+
 void MainWindow::addSfxButton(const QString &filename, const QString &label, bool reset) {
     static int numButtons = 0;
     if (reset)
@@ -66,7 +71,10 @@ void MainWindow::addSfxButton(const QString &filename, const QString &label, boo
             &MainWindow::sfxButtonContextMenuRequested);
     numButtons++;
 }
-#pragma clang diagnostic pop
+
+#if defined(__clang__)
+    #pragma clang diagnostic pop
+#endif //defined(__clang__)
 
 void MainWindow::refreshSfxButtons() {
     QLayoutItem *item;
@@ -132,14 +140,18 @@ void MainWindow::setupShortcuts() {
         bool empty{false};
         int curSingerId{m_rotModel.currentSinger()};
         int curPos{m_rotModel.getSinger(curSingerId).position};
+        // NOTE 1: Cast once to avoid multiple warnings on signed/unsigned comparisons
+        // TODO: look into making positions unsigned across the board, possibly
+        // requiring update to the DB model
+        int singer_count{static_cast<int>(m_rotModel.singerCount())};
         if (curSingerId == -1)
-            curPos = static_cast<int>(m_rotModel.singerCount() - 1);
+            curPos = singer_count - 1;
         int loops = 0;
         while ((nextSongPath == "") && (!empty)) {
-            if (loops > m_rotModel.singerCount()) {
+            if (loops > singer_count) {
                 empty = true;
             } else {
-                if (++curPos >= m_rotModel.singerCount()) {
+                if (++curPos >= singer_count) {
                     curPos = 0;
                 }
                 nextSinger = m_rotModel.getSingerAtPosition(curPos);
@@ -185,14 +197,16 @@ void MainWindow::setupShortcuts() {
         bool empty{false};
         int curSingerId{m_rotModel.currentSinger()};
         int curPos{m_rotModel.getSinger(curSingerId).position};
+        // See NOTE 1
+        int singer_count{static_cast<int>(m_rotModel.singerCount())};
         if (curSingerId == -1)
-            curPos = static_cast<int>(m_rotModel.singerCount() - 1);
+            curPos = singer_count - 1;
         int loops = 0;
         while ((nextSongPath == "") && (!empty)) {
-            if (loops > m_rotModel.singerCount()) {
+            if (loops > singer_count) {
                 empty = true;
             } else {
-                if (++curPos >= m_rotModel.singerCount()) {
+                if (++curPos >= singer_count) {
                     curPos = 0;
                 }
                 nextSinger = m_rotModel.getSingerAtPosition(curPos);
@@ -1945,17 +1959,19 @@ void MainWindow::karaokeMediaBackend_stateChanged(const MediaBackend::State &sta
 
                 int curSingerId = m_rotModel.currentSinger();
 
-                int curPos = m_rotModel.getSinger(curSingerId).position;
+                auto curPos = m_rotModel.getSinger(curSingerId).position;
+                // See NOTE 1
+                int singer_count = static_cast<int>(m_rotModel.singerCount());
                 if (m_settings.rotationAltSortOrder())
                     curPos = m_curSingerOriginalPosition;
                 if (curSingerId == -1)
-                    curPos = static_cast<int>(m_rotModel.singerCount() - 1);
+                    curPos = singer_count - 1;
                 int loops = 0;
                 while ((nextSongPath == "") && (!empty)) {
-                    if (loops > m_rotModel.singerCount()) {
+                    if (loops > singer_count) {
                         empty = true;
                     } else {
-                        if (++curPos >= m_rotModel.singerCount()) {
+                        if (++curPos >= singer_count) {
                             curPos = 0;
                         }
                         nextSinger = m_rotModel.getSingerAtPosition(curPos);
@@ -2080,7 +2096,7 @@ void MainWindow::rotationDataChanged() {
             nsPos = m_rotModel.getSinger(m_rotModel.currentSinger()).position;
         QString ns = "[nobody]";
         if (m_rotModel.singerCount() > 0) {
-            if (nsPos + 1 < m_rotModel.singerCount())
+            if (nsPos + 1 < static_cast<int>(m_rotModel.singerCount()))
                 nsPos++;
             else
                 nsPos = 0;
@@ -2115,7 +2131,7 @@ void MainWindow::rotationDataChanged() {
             displayPos = -1;
         }
         int listSize;
-        if (m_settings.tickerFullRotation() || (m_rotModel.singerCount() < m_settings.tickerShowNumSingers())) {
+        if (m_settings.tickerFullRotation() || (static_cast<int>(m_rotModel.singerCount()) < m_settings.tickerShowNumSingers())) {
             if (curSingerName == "")
                 listSize = static_cast<int>(m_rotModel.singerCount());
             else
@@ -2129,7 +2145,7 @@ void MainWindow::rotationDataChanged() {
             tickerText += " Singers: ";
         }
         for (int i = 0; i < listSize; i++) {
-            if (displayPos + 1 < m_rotModel.singerCount())
+            if (displayPos + 1 < static_cast<int>(m_rotModel.singerCount()))
                 displayPos++;
             else
                 displayPos = 0;
@@ -2527,7 +2543,8 @@ void MainWindow::markSongBad(const std::shared_ptr<okj::KaraokeSong>& song) {
     msgBox.setInformativeText(song->path);
     auto markBadButton = msgBox.addButton(tr("Mark Bad"), QMessageBox::ActionRole);
     auto removeFileButton = msgBox.addButton(tr("Remove File"), QMessageBox::ActionRole);
-    auto cancelButton = msgBox.addButton(QMessageBox::Cancel);
+    //auto cancelButton = 
+    msgBox.addButton(QMessageBox::Cancel);
     msgBox.exec();
     if (msgBox.clickedButton() == markBadButton) {
         m_karaokeSongsModel.markSongBad(song->path);
@@ -3490,7 +3507,7 @@ void MainWindow::bmDatabaseAboutToUpdate() {
 }
 
 void MainWindow::bmSongMoved(const int &oldPos, const int &newPos) {
-    int curPlPos = m_tableModelPlaylistSongs.currentPosition();
+    auto curPlPos = m_tableModelPlaylistSongs.currentPosition();
     if (oldPos < curPlPos && newPos >= curPlPos)
         curPlPos--;
     else if (oldPos > curPlPos && newPos <= curPlPos)
@@ -3664,7 +3681,7 @@ void MainWindow::btnRotTopClicked() {
 void MainWindow::btnRotUpClicked() {
     if (ui->tableViewRotation->selectionModel()->selectedRows().count() < 1)
         return;
-    int curPos = ui->tableViewRotation->selectionModel()->selectedRows().at(0).row();
+    auto curPos = ui->tableViewRotation->selectionModel()->selectedRows().at(0).row();
     if (curPos == 0)
         return;
     m_rotModel.singerMove(curPos, curPos - 1);
@@ -3675,8 +3692,8 @@ void MainWindow::btnRotUpClicked() {
 void MainWindow::btnRotDownClicked() {
     if (ui->tableViewRotation->selectionModel()->selectedRows().count() < 1)
         return;
-    int curPos = ui->tableViewRotation->selectionModel()->selectedRows().at(0).row();
-    if (curPos == m_rotModel.singerCount() - 1)
+    auto curPos = ui->tableViewRotation->selectionModel()->selectedRows().at(0).row();
+    if (curPos == static_cast<int>(m_rotModel.singerCount()) - 1)
         return;
     m_rotModel.singerMove(curPos, curPos + 1);
     ui->tableViewRotation->selectRow(curPos + 1);
@@ -3718,7 +3735,7 @@ void MainWindow::btnQTopClicked() {
 void MainWindow::btnQUpClicked() {
     if (ui->tableViewQueue->selectionModel()->selectedRows().count() < 1)
         return;
-    int curPos = ui->tableViewQueue->selectionModel()->selectedRows().at(0).row();
+    auto curPos = ui->tableViewQueue->selectionModel()->selectedRows().at(0).row();
     if (curPos == 0)
         return;
     m_qModel.move(curPos, curPos - 1);
@@ -3729,7 +3746,7 @@ void MainWindow::btnQUpClicked() {
 void MainWindow::btnQDownClicked() {
     if (ui->tableViewQueue->selectionModel()->selectedRows().count() < 1)
         return;
-    int curPos = ui->tableViewQueue->selectionModel()->selectedRows().at(0).row();
+    auto curPos = ui->tableViewQueue->selectionModel()->selectedRows().at(0).row();
     if (curPos == ui->tableViewQueue->model()->rowCount() - 1)
         return;
     m_qModel.move(curPos, curPos + 1);
@@ -3778,7 +3795,7 @@ void MainWindow::btnPlTopClicked() {
 void MainWindow::btnPlUpClicked() {
     if (ui->tableViewBmPlaylist->selectionModel()->selectedRows().count() < 1)
         return;
-    int curPos = ui->tableViewBmPlaylist->selectionModel()->selectedRows().at(0).row();
+    auto curPos = ui->tableViewBmPlaylist->selectionModel()->selectedRows().at(0).row();
     if (curPos == 0)
         return;
     m_tableModelPlaylistSongs.moveSong(curPos, curPos - 1);
@@ -3790,7 +3807,7 @@ void MainWindow::btnPlDownClicked() {
     int maxPos = ui->tableViewBmPlaylist->model()->rowCount() - 1;
     if (ui->tableViewBmPlaylist->selectionModel()->selectedRows().count() < 1)
         return;
-    int curPos = ui->tableViewBmPlaylist->selectionModel()->selectedRows().at(0).row();
+    auto curPos = ui->tableViewBmPlaylist->selectionModel()->selectedRows().at(0).row();
     if (curPos == maxPos)
         return;
     m_tableModelPlaylistSongs.moveSong(curPos, curPos + 1);
@@ -4006,7 +4023,7 @@ void MainWindow::actionPreviewBurnIn() {
     m_testMode = true;
     connect(&m_timerTest, &QTimer::timeout, [&]() {
         QApplication::beep();
-        static bool playing = false;
+        [[maybe_unused]] static bool playing = false;
         static int runs = 0;
         ui->labelSinger->setText("Preview burn-in run (" + QString::number(runs) + ")");
         int randomNum{0};
@@ -4302,7 +4319,8 @@ void MainWindow::actionBreakMusicTorture() {
     ui->comboBoxBmPlaylists->setCurrentText("torture");
     ui->tableViewBmDb->selectAll();
     auto mimeData = m_tableModelBreakSongs.mimeData(ui->tableViewBmDb->selectionModel()->selectedIndexes());
-    auto throwaway = m_tableModelPlaylistSongs.dropMimeData(mimeData, Qt::CopyAction, 0, 3, QModelIndex());
+    // TODO: check result
+    [[maybe_unused]] auto throwaway = m_tableModelPlaylistSongs.dropMimeData(mimeData, Qt::CopyAction, 0, 3, QModelIndex());
 
     connect(&m_timerTest, &QTimer::timeout, [&]() {
         QApplication::beep();
@@ -4342,7 +4360,7 @@ void MainWindow::actionBurnInEosJump() {
     }
     connect(&m_timerTest, &QTimer::timeout, [&]() {
         QApplication::beep();
-        static bool playing = false;
+        [[maybe_unused]] static bool playing = false;
         static int runs = 0;
         auto dist = std::uniform_int_distribution<int>(0, 19);
         m_rotModel.singerMove(dist(rng), dist(rng));

@@ -283,7 +283,8 @@ bool OKJSongbookAPI::test()
     QJsonDocument json = QJsonDocument::fromJson(data);
     m_logger->trace("{} Got server response: {}", m_loggingPrefix, json.toJson().toStdString());
     QString command = json.object().value("command").toString();
-    bool error = json.object().value("error").toBool();
+    // TODO: determine if this line can just be removed
+    [[maybe_unused]] bool error = json.object().value("error").toBool();
     if (json.object().value("errorString").toString() != "")
     {
         m_logger->warn("{} Got error reply: {}", m_loggingPrefix, json.object().value("errorString").toString());

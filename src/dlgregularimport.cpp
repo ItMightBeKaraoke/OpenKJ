@@ -33,9 +33,9 @@
 
 
 DlgRegularImport::DlgRegularImport(TableModelKaraokeSongs &karaokeSongsModel, QWidget *parent) :
-    m_karaokeSongsModel(karaokeSongsModel),
     QDialog(parent),
-    ui(new Ui::DlgRegularImport)
+    ui(new Ui::DlgRegularImport),
+    m_karaokeSongsModel(karaokeSongsModel)
 {
     ui->setupUi(this);
     m_curImportFile = "";

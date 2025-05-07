@@ -37,6 +37,7 @@ include_directories(
 
 # Qt6 Port - start by disabling deprecated APIs in Qt 5.15
 #add_compile_definitions(QT_DISABLE_DEPRECATED_UP_TO=0x050F00)
+add_compile_options(-Wall)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
     find_package(PkgConfig)

@@ -6,8 +6,8 @@
 
 DlgSongShop::DlgSongShop(std::shared_ptr<SongShop> songShop, QWidget *parent) :
     QDialog(parent),
-    shop(std::move(songShop)),
-    ui(new Ui::DlgSongShop)
+    ui(new Ui::DlgSongShop),
+    shop(std::move(songShop))
 {
     ui->setupUi(this);
     modelSongs = new TableModelSongShopSongs(shop, this);

@@ -5,8 +5,9 @@
 
 DlgAddSinger::DlgAddSinger(TableModelRotation &rotationModel, QWidget *parent) :
         QDialog(parent),
-        m_rotModel(rotationModel),
-        ui(new Ui::DlgAddSinger) {
+        ui(new Ui::DlgAddSinger),
+        m_rotModel(rotationModel)
+{
     ui->setupUi(this);
     ui->cbxPosition->addItems({"Fair", "Bottom", "Next"});
     ui->cbxPosition->setCurrentIndex(m_settings.lastSingerAddPositionType());

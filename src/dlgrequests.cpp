@@ -50,9 +50,10 @@ QString toMixedCase(const QString &s) {
 
 DlgRequests::DlgRequests(TableModelRotation &rotationModel, OKJSongbookAPI &songbookAPI, QWidget *parent) :
         QDialog(parent),
+        ui(new Ui::DlgRequests),
         rotModel(rotationModel),
-        songbookApi(songbookAPI),
-        ui(new Ui::DlgRequests) {
+        songbookApi(songbookAPI)
+{
     QString logDir = m_settings.logDir();
     QDir dir;
     dir.mkpath(logDir);

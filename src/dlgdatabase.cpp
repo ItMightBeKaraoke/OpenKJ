@@ -30,8 +30,8 @@
 
 DlgDatabase::DlgDatabase(TableModelKaraokeSongs &dbModel, QWidget *parent) :
     QDialog(parent),
-    m_dbModel(dbModel),
-    ui(new Ui::DlgDatabase)
+    ui(new Ui::DlgDatabase),
+    m_dbModel(dbModel)
 {
     ui->setupUi(this);
     sourcedirmodel = new TableModelKaraokeSourceDirs();
